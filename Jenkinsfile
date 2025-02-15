@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/PriyaKumari-2002/config-manage.git'
+                git branch: 'main', url: 'https://github.com/Anitha-Pal/config-management.git'
             }
         }
 
@@ -37,7 +37,7 @@ pipeline {
                         ibmcloud api https://cloud.ibm.com
 
                         echo 🔐 Logging into IBM Cloud...
-                        ibmcloud login -a https://cloud.ibm.com -u kumari.priyakumari002@gmail.com -p Pk@28022002!
+                        ibmcloud login -a https://cloud.ibm.com -u anithapal612@gmail.com -p Pk@28022002!
                         ibmcloud cr login
                         ibmcloud cr region-set ap-north
                         ibmcloud cr login --client docker
