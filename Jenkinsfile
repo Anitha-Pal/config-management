@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Windows\\System32"
-        IMAGE_NAME = 'config-manage'
-        CONTAINER_NAME = 'config-manage-container'
+        IMAGE_NAME = 'my-app'
+        CONTAINER_NAME = 'my-app-container'
     }
 
     stages {
