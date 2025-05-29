@@ -3,9 +3,7 @@ pipeline {
 
     environment {
         PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files\\IBM\\Cloud\\bin;C:\\Windows\\System32"
-        IBM_CLOUD_REGION = 'ap-north'
-        IBM_CLOUD_REGISTRY_NAMESPACE = 'config-manage'
-        IBM_CLOUD_REGISTRY_URL = 'jp.icr.io'  // IBM Container Registry for Tokyo
+    
     }
 
     stages {
@@ -25,55 +23,30 @@ pipeline {
                 }
             }
         }
-
-        stage('Push Docker Image') {
+stage('Remove Existing Container') {
             steps {
                 script {
-                    bat 'echo 📦 Preparing to push Docker image...'
-
-                    withCredentials([string(credentialsId: 'ibmcloud-api-key', variable: 'IBM_CLOUD_API_KEY')]) {
-                        bat """
-                        echo 🔐 Setting IBM Cloud API Endpoint...
-                        ibmcloud api https://cloud.ibm.com
-
-                        echo 🔐 Logging into IBM Cloud...
-                        ibmcloud login -a https://cloud.ibm.com -u anithapal612@gmail.com -p Pk@28022002!
-                        ibmcloud cr login
-                        ibmcloud cr region-set ap-north
-                        ibmcloud cr login --client docker
-                        """
-                    }
-
-                    def imageName = "${IBM_CLOUD_REGISTRY_URL}/${IBM_CLOUD_REGISTRY_NAMESPACE}/config-manage:latest"
                     bat """
-                    echo 🚀 Tagging and Pushing Docker Image...
-                    docker tag config-manage:latest ${imageName}
-                    docker push ${imageName}
+                    echo 🧹 Checking if old container exists...
+                    docker stop %CONTAINER_NAME% || echo Container not running
+                    docker rm %CONTAINER_NAME% || echo Container not found
                     """
                 }
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Run Docker Container') {
             steps {
                 script {
                     bat """
-                    echo 🚀 Starting Minikube...
-                     "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" start
-                     "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" service config-manage-service
-                
-                    echo 📡 Deploying to Kubernetes...
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-
-                    echo 🌐 Accessing Application...
-                    minikube service config-manage-service
+                    echo 🚀 Running Docker Container...
+                    docker run -d -p 8083:83 --name %CONTAINER_NAME% %IMAGE_NAME%:latest
                     """
                 }
             }
         }
-    }  // 🔹 Closes `stages`
-
+    }
+       
     post {
         success {
             echo '✅ Pipeline completed successfully!'
