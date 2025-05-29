@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Program Files\\IBM\\Cloud\\bin;C:\\Windows\\System32"
-    
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Windows\\System32"
+        IMAGE_NAME = 'config-manage'
+        CONTAINER_NAME = 'config-manage-container'
     }
 
     stages {
@@ -18,12 +19,13 @@ pipeline {
                 script {
                     bat """
                     echo 🔨 Building Docker Image...
-                    docker build -t config-manage:latest -f docker/Dockerfile .
+                    docker build -t %IMAGE_NAME%:latest -f docker/Dockerfile .
                     """
                 }
             }
         }
-stage('Remove Existing Container') {
+
+        stage('Remove Existing Container') {
             steps {
                 script {
                     bat """
@@ -46,7 +48,7 @@ stage('Remove Existing Container') {
             }
         }
     }
-       
+
     post {
         success {
             echo '✅ Pipeline completed successfully!'
@@ -55,4 +57,4 @@ stage('Remove Existing Container') {
             echo '❌ Pipeline failed!'
         }
     }
-}  // 🔹 Closes `pipeline`
+}
