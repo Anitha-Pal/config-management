@@ -3,14 +3,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return """
-        <html>
-            <body>
-                <h1>Hello, World!</h1>
-                <p>Welcome to my project!</p>
-            </body>
-        </html>
-    """
+    return "Hello World, Welcome to my project!"
 
 
 if __name__ == '__main__':
